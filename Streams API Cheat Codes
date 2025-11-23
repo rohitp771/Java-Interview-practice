@@ -1,0 +1,23 @@
+list.stream();
+list.stream().filter(x -> x.startsWith("A"));
+list.stream()
+    .map(String::toUpperCase)
+    .collect(Collectors.toList());
+
+list.stream()
+    .sorted(Comparator.reverseOrder())
+    .collect(Collectors.toList());
+
+list.stream().distinct();
+list.stream().limit(5);
+list.stream().skip(2);
+list.stream().count();
+list.stream().max(String::compareTo).get();
+
+int sum = nums.stream().reduce(0, (a,b) -> a+b);
+
+List<String> res = list.stream().collect(Collectors.toList());
+Set<String> res2 = list.stream().collect(Collectors.toSet());
+
+Map<String, Long> freq =
+    list.stream().collect(Collectors.groupingBy(x -> x, Collectors.counting()));
