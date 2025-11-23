@@ -1,0 +1,12 @@
+public static List<List<String>> getList(List<String> gadgets, String search){//camera
+int 1 = search.length();
+List<List<String>> finalList = new ArrayList();
+for(int i=0; i<l; i++){
+     String temp search.substring(0, i+1); List<String> shortlisted
+    gadgets.stream().filter(gadget -> gadget.startsWith(temp)).collect(Collectors.toList());
+    Collections.sort(shortlisted);
+    shortlisted shortlisted. subList(0, 3);
+    finalList.add(shortlisted);
+}
+return finalList;
+}
