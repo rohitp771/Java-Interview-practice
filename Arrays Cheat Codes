@@ -1,0 +1,10 @@
+
+int[] arr = {3,1,2};
+
+Arrays.sort(arr);                      // sort
+Arrays.fill(arr, 0);                   // fill all with 0
+Arrays.toString(arr);                  // print array
+Arrays.copyOf(arr, newSize);           // resize
+Arrays.copyOfRange(arr, 1, 3);         // slice array
+Arrays.equals(arr1, arr2);             // compare
+Arrays.binarySearch(arr, 2);           // binary search
