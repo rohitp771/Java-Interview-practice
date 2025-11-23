@@ -1,0 +1,48 @@
+ ------------------ List ----------------
+
+List<String> list = new ArrayList<>();
+list.add("A");                 // add
+list.add(1, "B");              // add at index
+list.get(0);                   // get
+list.set(0, "X");              // update
+list.remove("B");              // remove element
+list.remove(0);                // remove by index
+list.contains("X");            // check existence
+list.size();                   // size
+list.subList(0,3);                   index,length
+
+Collections.sort(list);        // sort
+Collections.reverse(list);     // reverse
+
+String[] arr = list.toArray(new String[0]);
+List<String> list2 = Arrays.asList("A","B","C");
+
+ ------------------ SET ------------------------------
+
+Set<String> set = new HashSet<>();
+set.add("A");
+set.remove("A");
+set.contains("A");
+set.isEmpty();
+set.size();
+
+for(String s : set) {}
+set.forEach(System.out::println);
+
+------------------------------- MAP -----------------------
+Map<String, Integer> map = new HashMap<>();
+map.put("A", 1);
+map.get("A");                  // get value
+map.containsKey("A");
+map.containsValue(1);
+map.remove("A");
+map.size();
+
+for (Map.Entry<String,Integer> e : map.entrySet()) {
+    System.out.println(e.getKey() + "=" + e.getValue());
+}
+
+map.getOrDefault("A", 0);
+map.putIfAbsent("B", 2);
+map.computeIfAbsent("C", k -> 5);
+map.merge("A", 1, (oldVal, newVal) -> oldVal + newVal);
