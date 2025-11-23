@@ -1,0 +1,20 @@
+str.length();
+str.charAt(0);
+str.substring(2);
+str.substring(2, 5);
+str.contains("abc");
+str.equalsIgnoreCase("abc");
+str.indexOf("a");
+str.lastIndexOf("a");
+str.toUpperCase();
+str.toLowerCase();
+str.trim();
+str.startsWith("Hi");
+str.endsWith("Bye");
+str.split(",");
+String.join("-", list);
+str.replace("a", "b");
+str.isEmpty();
+
+String.valueOf(123);
+Integer.parseInt("123");
