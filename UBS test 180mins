@@ -1,0 +1,168 @@
+const mergeArrays = (...arrays) => {
+    let mergedArrays = [].concat(...arrays);
+    let uniqueArray = [...new Set(mergedArrays)];
+    uniqueArray.sort();
+return uniqueArray;
+}
+-----------------------------------------------------------
+function reverseWords(sentence){
+    let reversedSentence = sentence.split(" ").reverse().join(" ");
+    return reversedSentence;
+}
+-----------------------------------------------------------
+There could be one or multiple reasons for blocked request. 
+Listing down the possible reasons:
+
+1. Cross-Origin Resource sharing(CORS) restriction 
+The server interview.com might be returning different or invalid domains than expected, or it may be missing.
+expected Header - Access-Control-Allow-Origin: https://hiring.com
+
+2. Server should return proper acces control headers
+Expected returns for different headers:
+Access-Control-Allow-Methods: POST, GET, OPTIONS etc.
+Access-Control-Allow-Headers: Authorization, Content-Type etc.
+If its missing in the request might get blocked.
+
+3.If there are Mixed contents(HTTP and HTTPS) browser might block the requests.
+
+4.Security systems like: Cloudflare or AWS WAF, Firewall might block unusual traffic or non-browser requests,
+
+5. Missing Authentication token can one of the reason.
+If interview.com expects API Key or Token or JWT or Session cookie and it’s not sent or invalid, request might fail.
+-----------------------------------------------------------
+
+KANBAN
+
+import React, { Component } from "react";
+
+class KanbanBoard extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      columns: ["Backlog", "To Do", "Ongoing", "Done"],
+      tasks: {
+        Backlog: ["task 1", "task 2", "task 3"],
+        "To Do": ["task 4"],
+        Ongoing: ["task 5"],
+        Done: ["task 6"]
+      },
+      selectedTask: null,
+      newTaskName: ""
+    };
+  }
+
+  handleCreate = () => {
+    const name = this.state.newTaskName.trim();
+    if (!name) return;
+
+    this.setState((prev) => ({
+      tasks: {
+        ...prev.tasks,
+        Backlog: [...prev.tasks.Backlog, name]
+      },
+      newTaskName: ""
+    }));
+  };
+
+  handleSelectTask = (col, task) => {
+    this.setState({ selectedTask: { col, task }, newTaskName: task });
+  };
+
+  handleDelete = () => {
+    const { selectedTask, tasks } = this.state;
+    if (!selectedTask) return;
+
+    const updated = { ...tasks };
+    updated[selectedTask.col] = updated[selectedTask.col].filter(
+      (t) => t !== selectedTask.task
+    );
+
+    this.setState({ tasks: updated, selectedTask: null, newTaskName: "" });
+  };
+
+  moveTask = (direction) => {
+    const { selectedTask, columns, tasks } = this.state;
+    if (!selectedTask) return;
+
+    const currentIndex = columns.indexOf(selectedTask.col);
+    const newIndex = direction === "forward" ? currentIndex + 1 : currentIndex - 1;
+
+    if (newIndex < 0 || newIndex >= columns.length) return;
+
+    const updated = { ...tasks };
+    updated[selectedTask.col] = updated[selectedTask.col].filter(
+      (t) => t !== selectedTask.task
+    );
+    updated[columns[newIndex]] = [...updated[columns[newIndex]], selectedTask.task];
+
+    this.setState({
+      tasks: updated,
+      selectedTask: { col: columns[newIndex], task: selectedTask.task }
+    });
+  };
+
+  render() {
+    const { columns, tasks, selectedTask, newTaskName } = this.state;
+
+    return (
+      <div className="p-10">
+        <div className="bg-blue-100 p-4 rounded mb-6 text-center">
+          <h2 className="text-xl font-bold mb-4">Controls</h2>
+          <input
+            type="text"
+            value={newTaskName}
+            className="border p-2 mr-2"
+            onChange={(e) => this.setState({ newTaskName: e.target.value })}
+          />
+          <button onClick={this.handleCreate} className="bg-blue-500 text-white p-2 mr-2 rounded">
+            Create
+          </button>
+
+          <button
+            onClick={() => this.moveTask("back")}
+            className="bg-gray-500 text-white p-2 mr-2 rounded"
+          >
+            Move Back
+          </button>
+
+          <button
+            onClick={() => this.moveTask("forward")}
+            className="bg-green-500 text-white p-2 mr-2 rounded"
+          >
+            Move Forward
+          </button>
+
+          <button
+            onClick={this.handleDelete}
+            className="bg-red-500 text-white p-2 rounded"
+          >
+            Delete
+          </button>
+        </div>
+
+        <h2 className="text-2xl font-bold text-center mb-4">Kanban board</h2>
+
+        <div className="grid grid-cols-4 gap-4">
+          {columns.map((col) => (
+            <div key={col} className="border p-4 rounded shadow bg-white">
+              <h3 className="font-bold text-center mb-4">{col}</h3>
+              {tasks[col].map((task) => (
+                <div
+                  key={task}
+                  onClick={() => this.handleSelectTask(col, task)}
+                  className={`p-2 mb-2 border rounded cursor-pointer text-center shadow ${
+                    selectedTask && selectedTask.task === task ? "bg-yellow-200" : "bg-gray-50"
+                  }`}
+                >
+                  {task}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+}
+
+export default KanbanBoard;
