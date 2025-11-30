@@ -1,0 +1,149 @@
+1. Entity: Book
+-----------------------------------------
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+
+@Entity
+public class Book {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Book name is required")
+    private String name;
+
+    @NotBlank(message = "Author is required")
+    private String author;
+
+    private String isbn;
+    private int publishedYear;
+
+    // Getters and Setters
+}
+-----------------------------------------
+2. Repository
+-----------------------------------------
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface BookRepository extends JpaRepository<Book, Long> {
+    List<Book> findByNameContainingIgnoreCase(String name);
+}
+
+-----------------------------------------
+3. Service Layer (Optional but Recommended)
+-----------------------------------------
+import org.springframework.stereotype.Service;
+import java.util.List;
+
+
+@Service
+public class BookService {
+
+    private final BookRepository repo;
+
+    public BookService(BookRepository repo) {
+        this.repo = repo;
+    }
+
+    public Book addBook(Book book) {
+        return repo.save(book);
+    }
+
+    public Book updateBook(Long id, Book updated) {
+        return repo.findById(id)
+                .map(existing -> {
+                    existing.setName(updated.getName());
+                    existing.setAuthor(updated.getAuthor());
+                    existing.setIsbn(updated.getIsbn());
+                    existing.setPublishedYear(updated.getPublishedYear());
+                    return repo.save(existing);
+                })
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+    }
+
+    public void deleteBook(Long id) {
+        repo.deleteById(id);
+    }
+
+    public List<Book> findByName(String name) {
+        return repo.findByNameContainingIgnoreCase(name);
+    }
+
+    public Book getBook(Long id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Book not found"));
+    }
+}
+
+-----------------------------------------
+4. Controller: REST Endpoints
+-----------------------------------------
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/books")
+public class BookController {
+
+    private final BookService service;
+
+    public BookController(BookService service) {
+        this.service = service;
+    }
+
+    // 1. Add a book
+    @PostMapping
+    public ResponseEntity<Book> addBook(@RequestBody Book book) {
+        return ResponseEntity.ok(service.addBook(book));
+    }
+
+    // 2. Update an existing book
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(
+            @PathVariable Long id,
+            @RequestBody Book updated
+    ) {
+        return ResponseEntity.ok(service.updateBook(id, updated));
+    }
+
+    // 3. Remove a book
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+        service.deleteBook(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // 4. Fetch books by name
+    @GetMapping("/search")
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam String name) {
+        return ResponseEntity.ok(service.findByName(name));
+    }
+
+    // 5. Retrieve details of a specific book
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBook(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getBook(id));
+    }
+}
+
+-----------------------------------------
+5. API Endpoints Summary
+Action	Method	Endpoint	Request Body	Description
+Add book	POST	/api/books	JSON Book	Adds a new book
+Update book	PUT	/api/books/{id}	JSON Book	Updates an existing book
+Remove book	DELETE	/api/books/{id}	None	Deletes a book by ID
+Search by name	GET	/api/books/search?name=Java	None	Returns books matching name
+Get book details	GET	/api/books/{id}	None	Returns full book details
+6. Example JSON for Add/Update
+
+-----------------------------------------
+{
+  "name": "Effective Java",
+  "author": "Joshua Bloch",
+  "isbn": "9780134685991",
+  "publishedYear": 2018
+}
